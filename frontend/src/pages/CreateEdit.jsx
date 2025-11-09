@@ -19,6 +19,21 @@ export default function CreateEdit(){
   })
   const [categoryInput, setCategoryInput] = useState('')
   const [tagInput, setTagInput] = useState('')
+  const [coverFile, setCoverFile] = useState(null)
+  const [coverPreview, setCoverPreview] = useState('')
+
+  useEffect(() => {
+    let url
+    if (coverFile) {
+      url = URL.createObjectURL(coverFile)
+      setCoverPreview(url)
+    } else {
+      setCoverPreview('')
+    }
+    return () => {
+      if (url) URL.revokeObjectURL(url)
+    }
+  }, [coverFile])
 
   useEffect(() => {
     if (!id) return
@@ -98,24 +113,46 @@ export default function CreateEdit(){
 
     setLoading(true)
     try {
-      const payload = {
-        title: formData.title,
-        content: formData.content,
-        coverImage: formData.coverImage,
-        categories: formData.categories,
-        tags: formData.tags,
-        published: formData.published
-      }
+      // If a file was chosen, send multipart/form-data
+      if (coverFile) {
+        const data = new FormData()
+        data.append('title', formData.title)
+        data.append('content', formData.content)
+        data.append('categories', JSON.stringify(formData.categories))
+        data.append('tags', JSON.stringify(formData.tags))
+        data.append('published', formData.published)
+        data.append('coverImage', coverFile)
 
-      if (id) {
-        await api.put(`/blogs/updateblog/${id}`, payload)
-        toast.success('Post updated successfully!')
-        navigate(`/post/${id}`)
+        if (id) {
+          await api.put(`/blogs/updateblog/${id}`, data)
+          toast.success('Post updated successfully!')
+          navigate(`/post/${id}`)
+        } else {
+          const res = await api.post('/blogs/createblog', data)
+          const newPostId = res.data?.blog?._id || res.data?._id
+          toast.success('Post created successfully!')
+          navigate(`/post/${newPostId}`)
+        }
       } else {
-        const res = await api.post('/blogs/createblog', payload)
-        const newPostId = res.data?.blog?._id || res.data?._id
-        toast.success('Post created successfully!')
-        navigate(`/post/${newPostId}`)
+        const payload = {
+          title: formData.title,
+          content: formData.content,
+          coverImage: formData.coverImage,
+          categories: formData.categories,
+          tags: formData.tags,
+          published: formData.published
+        }
+
+        if (id) {
+          await api.put(`/blogs/updateblog/${id}`, payload)
+          toast.success('Post updated successfully!')
+          navigate(`/post/${id}`)
+        } else {
+          const res = await api.post('/blogs/createblog', payload)
+          const newPostId = res.data?.blog?._id || res.data?._id
+          toast.success('Post created successfully!')
+          navigate(`/post/${newPostId}`)
+        }
       }
     } catch (err) {
       console.error(err)
@@ -170,7 +207,7 @@ export default function CreateEdit(){
               {/* Cover Image */}
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                  Cover Image URL
+                  Cover Image
                 </label>
                 <input
                   type="text"
@@ -180,19 +217,32 @@ export default function CreateEdit(){
                   placeholder="https://example.com/image.jpg"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition"
                 />
-                {formData.coverImage && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload Cover Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files && e.target.files[0]
+                      setCoverFile(file || null)
+                      if (file) setFormData({ ...formData, coverImage: '' })
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                {(coverPreview || formData.coverImage) && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     className="mt-4"
                   >
                     <img
-                      src={formData.coverImage}
+                      src={coverPreview || formData.coverImage}
                       alt="Cover preview"
                       className="w-full h-64 object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none'
-                        toast.error('Invalid image URL')
+                        toast.error('Invalid image')
                       }}
                     />
                   </motion.div>

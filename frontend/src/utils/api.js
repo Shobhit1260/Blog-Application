@@ -5,8 +5,13 @@ const API = (path, opts = {}) => {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' }
   }, opts)
-
-  if (options.body && typeof options.body !== 'string') options.body = JSON.stringify(options.body)
+  // If body is FormData (file upload), don't set Content-Type and don't stringify
+  if (options.body instanceof FormData) {
+    // remove content-type header so browser sets proper multipart boundary
+    if (options.headers && options.headers['Content-Type']) delete options.headers['Content-Type']
+  } else if (options.body && typeof options.body !== 'string') {
+    options.body = JSON.stringify(options.body)
+  }
 
   return fetch(url, options)
     .then(async res => {

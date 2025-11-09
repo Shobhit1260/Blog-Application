@@ -8,6 +8,16 @@ import CreateEdit from './pages/CreateEdit'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import MyProfile from './pages/MyProfile'
+import MyPosts from './pages/MyPosts'
+import Settings from './pages/Settings'
+import Profile from './pages/Profile'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
+import Guidelines from './pages/Guidelines'
+import Cookies from './pages/Cookies'
 import { Toaster } from 'react-hot-toast'
 
 export default function App(){
@@ -23,6 +33,16 @@ export default function App(){
           <Route path="/login" element={<Login/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/reset-password/:token" element={<ResetPassword/>} />
+          <Route path="/profile" element={<MyProfile/>} />
+          <Route path="/profile/:id" element={<Profile/>} />
+          <Route path="/my-posts" element={<MyPosts/>} />
+          <Route path="/settings" element={<Settings/>} />
+          <Route path="/about" element={<About/>} />
+          <Route path="/contact" element={<Contact/>} />
+          <Route path="/terms" element={<Terms/>} />
+          <Route path="/privacy" element={<Privacy/>} />
+          <Route path="/guidelines" element={<Guidelines/>} />
+          <Route path="/cookies" element={<Cookies/>} />
         </Routes>
       </main>
       <Footer />

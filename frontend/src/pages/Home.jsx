@@ -30,6 +30,10 @@ export default function Home(){
     load()
   },[])
 
+  const handlePostDeleted = (postId) => {
+    setPosts(prev => prev.filter(p => p._id !== postId))
+  }
+
   // build filter sets
   const allCategories = Array.from(new Set(posts.flatMap(p=>p.categories || [])))
   const allTags = Array.from(new Set(posts.flatMap(p=>p.tags || [])))
@@ -81,7 +85,7 @@ export default function Home(){
         </div>
 
         <motion.div layout className="grid md:grid-cols-3 gap-6">
-          {featured.map(p=> <BlogCard key={p._id} post={p} />)}
+          {featured.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
         </motion.div>
       </section>
 
@@ -89,7 +93,7 @@ export default function Home(){
         <h2 className="text-2xl font-bold mb-4">Latest</h2>
         {loading ? <p>Loading...</p> : (
           <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-6">
-            {filtered.map(p=> <BlogCard key={p._id} post={p} />)}
+            {filtered.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
           </div>
         )}
       </section>

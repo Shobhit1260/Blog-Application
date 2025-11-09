@@ -1,42 +1,41 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import { selectUser, selectIsLoggedIn } from '../store/store'
+import { initializeUser, clearUser } from '../store/userSlice'
 
 export default function Header(){
   const navigate = useNavigate()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
+  const isLoggedIn = useSelector(selectIsLoggedIn)
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === '1'
-    setIsLoggedIn(loggedIn)
-    
-    // Optionally fetch user info if logged in
-    if (loggedIn) {
-      // You can add a /users/me endpoint to fetch current user
-      setUser({ name: 'User', email: 'user@example.com' })
-    }
-  }, [])
+    // Initialize user from localStorage on component mount
+    dispatch(initializeUser())
+  }, [dispatch])
+
+  // Debug: Log user changes
+  useEffect(() => {
+    console.log('Header - User updated:', user)
+  }, [user])
 
   const handleLogout = async () => {
     try {
       await api.post('/users/logout')
-      localStorage.removeItem('isLoggedIn')
-      setIsLoggedIn(false)
-      setUser(null)
+      dispatch(clearUser())
       toast.success('Logged out successfully')
       navigate('/')
     } catch (err) {
       console.error(err)
-      // Clear local state anyway
-      localStorage.removeItem('isLoggedIn')
-      setIsLoggedIn(false)
-      setUser(null)
+      // Clear state anyway
+      dispatch(clearUser())
       navigate('/')
     }
   }
@@ -108,7 +107,7 @@ export default function Header(){
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
-                    {user?.name?.charAt(0) || 'U'}
+                    {user?.username?.charAt(0) || 'U'}
                   </div>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -125,7 +124,7 @@ export default function Header(){
                       className="absolute right-0 mt-2 w-56 rounded-lg shadow-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden"
                     >
                       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                        <p className="text-sm font-semibold">{user?.name || 'User'}</p>
+                        <p className="text-sm font-semibold">{user?.username || 'User'}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || 'user@example.com'}</p>
                       </div>
                       

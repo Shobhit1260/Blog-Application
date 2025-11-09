@@ -23,13 +23,99 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"",
     } ,
+    bio:{
+        type:String,
+        default:"",
+        maxlength:500,
+    },
+    avatar:{
+        type:String,
+        default:"",
+    },
+    bgImage:{
+        type:String,
+        default:"",
+    },
+    location:{
+        type:String,
+        default:"",
+    },
+    website:{
+        type:String,
+        default:"",
+    },
+    postsCount:{
+        type:Number,
+        default:0,
+    },
+    followersCount:{
+        type:Number,
+        default:0,
+    },
+    followingCount:{
+        type:Number,
+        default:0,
+    },
+    // Store actual follower/following references
+    followers:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    following:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     role:{
       type:String,
       enum:["user","admin"],
       default:"user",
     },
     resetPasswordToken:String,
-    resetPasswordTokenexpire:Date,       
+    resetPasswordTokenexpire:Date,
+    // Settings
+    settings:{
+        notifications:{
+            emailNotifications:{
+                type:Boolean,
+                default:true,
+            },
+            commentNotifications:{
+                type:Boolean,
+                default:true,
+            },
+            likeNotifications:{
+                type:Boolean,
+                default:true,
+            },
+            newFollowerNotifications:{
+                type:Boolean,
+                default:true,
+            },
+            weeklyDigest:{
+                type:Boolean,
+                default:true,
+            },
+        },
+        privacy:{
+            profileVisibility:{
+                type:String,
+                enum:["public","private","followers"],
+                default:"public",
+            },
+            showEmail:{
+                type:Boolean,
+                default:false,
+            },
+            allowComments:{
+                type:Boolean,
+                default:true,
+            },
+            showReadingStats:{
+                type:Boolean,
+                default:true,
+            },
+        },
+    },       
    
 },{timestamps:true});
  

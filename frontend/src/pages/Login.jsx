@@ -1,11 +1,14 @@
 // @ts-nocheck
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { motion } from 'framer-motion'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import { setUser } from '../store/userSlice'
 
 export default function Login(){
+  const dispatch = useDispatch()
   const [mode, setMode] = useState('login') // 'login' or 'register'
   const [formData, setFormData] = useState({
     name: '',
@@ -49,7 +52,6 @@ export default function Login(){
           password: formData.password,
           confirmpassword: formData.confirmPassword
         })
-        console.log("data", data);
         toast.success('Account created successfully! Please login.')
         setMode('login')
         setFormData({ name: '', email: '', password: '', confirmPassword: '' })
@@ -58,15 +60,23 @@ export default function Login(){
         if (!formData.email || !formData.password) {
           toast.error('Email and password required')
           setLoading(false)
-          return
+          return;
         }
 
         await api.post('/users/login', {
           email: formData.email,
           password: formData.password
         })
+
+        const data = await api.get('/users/me');
+        const user = data.data.user;
+        console.log("user on login", user);
+        
+        // Dispatch user to Redux store (also saves to localStorage)
+        dispatch(setUser(user))
+        
         toast.success('Welcome back!')
-        localStorage.setItem('isLoggedIn', '1')
+      
         navigate('/')
       }
     } catch (err) {
