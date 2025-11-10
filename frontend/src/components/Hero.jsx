@@ -108,9 +108,7 @@ export default function Hero(){
             className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 border border-gray-100 dark:border-gray-700"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                JD
-              </div>
+
               <div>
                 <div className="font-semibold text-sm">Just Published</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">2 minutes ago</div>
