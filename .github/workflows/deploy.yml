@@ -29,7 +29,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/your-repo
+            ssh -i ${{ secrets.EC2_KEY }} ubuntu@${{ secrets.EC2_HOST }}
             git pull origin main
+            cd /home/ubuntu/Blog-Application
             npm install
-            pm2 restart all
+            npm run build
+            pm2 restart blogApi
+            pm2 restart frontend
