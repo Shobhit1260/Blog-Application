@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # runs only when you push to main
+      - main
 
 jobs:
   deploy:
@@ -29,10 +29,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            ssh -i ${{ secrets.EC2_KEY }} ubuntu@${{ secrets.EC2_HOST }}
-            git pull origin main
             cd /home/ubuntu/Blog-Application
+            git pull origin main
+            # Backend
+            npm install
+            pm2 restart server
+            # Frontend (if separate folder)
+            cd frontend
             npm install
             npm run build
-            pm2 restart blogApi
             pm2 restart frontend
