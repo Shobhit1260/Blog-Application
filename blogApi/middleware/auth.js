@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
 
-const protect = async (req, res, next) => {
+ const protect = async (req, res, next) => {
   let token;
 
   // check Authorization header first

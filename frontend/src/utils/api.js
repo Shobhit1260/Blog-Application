@@ -1,5 +1,6 @@
 const API = (path, opts = {}) => {
-  const base = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  const base = 'http://localhost:3000/api' 
+  // const base ='https://blogapi.shobhitsri.me/api'
   const url = base + path
   const options = Object.assign({
     credentials: 'include',

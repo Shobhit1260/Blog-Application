@@ -34,8 +34,4 @@ jobs:
             # Backend
             npm install
             pm2 restart server
-            # Frontend (if separate folder)
-            cd frontend
-            npm install
-            npm run build
-            pm2 restart frontend
+        

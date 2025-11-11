@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes.js');
 const blogRoutes = require('./routes/blogRoutes.js');
+const aiRoutes = require('./routes/airoutes.js');
 
 // loading environment variables
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.use('/api/users',userRoutes);
 app.use('/api/blogs',blogRoutes);
+app.use('/api', aiRoutes);
 
 // start Server
 const port=process.env.PORT || 5000;

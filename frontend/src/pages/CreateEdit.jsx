@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import Markdown from 'react-markdown'
 
 export default function CreateEdit(){
   const { id } = useParams()
@@ -21,6 +22,7 @@ export default function CreateEdit(){
   const [tagInput, setTagInput] = useState('')
   const [coverFile, setCoverFile] = useState(null)
   const [coverPreview, setCoverPreview] = useState('')
+  const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
     let url
@@ -436,6 +438,63 @@ export default function CreateEdit(){
                 >
                   Cancel
                 </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      // Generate article from backend and load into textarea
+                      if (!formData.title.trim()) {
+                        toast.error('Please enter a title first to generate content')
+                        return
+                      }
+                      try {
+                        setGenerating(true)
+                        // Build a prompt based on the current title + optional categories/tags
+                        let prompt = `Write a well-structured, SEO-friendly blog article titled "${formData.title}". Include an engaging introduction, 3-5 clear sections with headings, and a concise conclusion.`
+                        if (formData.categories && formData.categories.length) {
+                          prompt += ` Focus on: ${formData.categories.join(', ')}.`
+                        }
+                        if (formData.tags && formData.tags.length) {
+                          prompt += ` Use keywords: ${formData.tags.join(', ')}.`
+                        }
+
+                        const payload = {
+                          title: formData.title,
+                          prompt,
+                          categories: formData.categories,
+                          tags: formData.tags,
+                        }
+
+                        const res = await api.post('/generate-article', payload)
+                        const generated = res.data?.generated || res.data?.content || ''
+                        if (!generated) {
+                          toast.error('No generated content returned')
+                        } else {
+                          setFormData({ ...formData, content: generated })
+                          toast.success('Generated article loaded')
+                        }
+                      } catch (err) {
+                        console.error(err)
+                        toast.error(err?.data?.message || 'Failed to generate article')
+                      } finally {
+                        setGenerating(false)
+                      }
+                    }}
+                    className="w-full mt-2 py-3 px-4 bg-yellow-500 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition disabled:opacity-50"
+                    disabled={generating}
+                  >
+                    {generating ? (
+                      
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Generating...
+                      </span>
+                    ) : (
+                      'Generate Article'
+                    )}
+                  </button>
               </div>
             </div>
           </div>
