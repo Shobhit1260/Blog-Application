@@ -84,13 +84,38 @@ exports.getblogs=async(req,res)=>{
 exports.getblog=async(req,res)=>{
     try{
         
-     const parameterId = req.params.id;  
-     console.log("Parameter ID:", parameterId); // Debugging line
+         const parameterId = req.params.id;  
          const blog = await Blog.findById(req.params.id)
              .populate('author', 'username email')
              .populate({ path: 'comments.user', select: 'username avatar' });
          if (!blog) return res.status(404).json({ message: 'blog not found.' });
-         res.status(200).json({ success: true, blog, message: 'blog is found' })
+                // Build nested comment tree from flat comments array
+                try {
+                    const commentsFlat = blog.comments.map(c => ({ ...c.toObject(), children: [] }));
+                    /**
+                     * Use an object with string keys for easier lookup.
+                     * Explicitly declare as Object to satisfy linters.
+                     */
+                    const map = Object.create(null);
+                    commentsFlat.forEach(c => { map[c._id.toString()] = c; });
+                    const nested = [];
+                    commentsFlat.forEach(c => {
+                        if (c.parentId) {
+                            const pid = c.parentId.toString();
+                            if (map[pid]) map[pid].children.push(c);
+                            else nested.push(c);
+                        } else {
+                            nested.push(c);
+                        }
+                    });
+
+                    const blogObj = blog.toObject();
+                    blogObj.comments = nested;
+                    return res.status(200).json({ success: true, blog: blogObj, message: 'blog is found' });
+                } catch (err) {
+                    console.error('Error building nested comments', err);
+                    return res.status(200).json({ success: true, blog, message: 'blog is found' });
+                }
     }
     catch(error){
         console.error(error);
@@ -216,7 +241,10 @@ exports.commentblog = async (req, res) => {
         const blog = await Blog.findById(req.params.id).populate('author');
         if (!blog) return res.status(404).json({ message: 'blog not found.' });
 
-        blog.comments.push({ user: req.user._id, comment: req.body.comment });
+    // Allow optional parentId for replies and optional emoji
+    const parentId = req.body.parentId || null;
+    const emoji = req.body.emoji || '';
+    blog.comments.push({ user: req.user._id, comment: req.body.comment, emoji, parentId });
         await blog.save();
 
         // Send email notification to post author (if not commenting on own post)
@@ -228,11 +256,33 @@ exports.commentblog = async (req, res) => {
         }
 
         // Return populated blog including commenter info
-        const updated = await Blog.findById(req.params.id)
-            .populate('author', 'username email')
-            .populate({ path: 'comments.user', select: 'username avatar' });
+                const updated = await Blog.findById(req.params.id)
+                        .populate('author', 'username email')
+                        .populate({ path: 'comments.user', select: 'username avatar' });
 
-        res.status(200).json({ blog: updated, message: 'comment is pushed.' });
+                // Build nested comments for response
+                try {
+                    const commentsFlat = updated.comments.map(c => ({ ...c.toObject(), children: [] }));
+                    const map = Object.create(null);
+                    commentsFlat.forEach(c => { map[c._id.toString()] = c; });
+                    const nested = [];
+                    commentsFlat.forEach(c => {
+                        if (c.parentId) {
+                            const pid = c.parentId.toString();
+                            if (map[pid]) map[pid].children.push(c);
+                            else nested.push(c);
+                        } else {
+                            nested.push(c);
+                        }
+                    });
+
+                    const blogObj = updated.toObject();
+                    blogObj.comments = nested;
+                    res.status(200).json({ blog: blogObj, message: 'comment is pushed.' });
+                } catch (err) {
+                    console.error('Error building nested comments', err);
+                    res.status(200).json({ blog: updated, message: 'comment is pushed.' });
+                }
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'internal server error' });

@@ -1,0 +1,70 @@
+/* Custom Quill styles to match Tailwind light/dark themes */
+.quill-editor .ql-toolbar {
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 1px solid #e5e7eb; /* light gray */
+  background: #ffffff;
+  color: #111827;
+}
+.quill-editor .ql-container {
+  border-radius: 0 0 0.5rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  min-height: 12rem;
+}
+.quill-editor .ql-editor {
+  min-height: 12rem;
+  padding: 1rem;
+  color: #111827;
+  background: transparent;
+  font-family: inherit;
+}
+.quill-editor .ql-editor.ql-blank::before {
+  color: #6b7280; /* tailwind gray-500 */
+}
+
+/* Dark mode overrides */
+.dark .quill-editor .ql-toolbar {
+  background: #0f172a; /* slate-900 */
+  color: #e5e7eb; /* gray-200 */
+  border: 1px solid #374151; /* slate-700 */
+}
+.dark .quill-editor .ql-container {
+  background: #0b1220; /* dark background */
+  color: #e5e7eb;
+  border: 1px solid #374151;
+}
+.dark .quill-editor .ql-editor {
+  color: #e5e7eb;
+}
+.dark .quill-editor .ql-editor.ql-blank::before {
+  color: #9ca3af; /* gray-400 */
+}
+
+/* Toolbar button colors */
+.quill-editor .ql-toolbar button,
+.quill-editor .ql-toolbar .ql-picker-label {
+  color: inherit;
+}
+.quill-editor .ql-toolbar .ql-picker-options {
+  background: #ffffff;
+}
+.dark .quill-editor .ql-toolbar .ql-picker-options {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Make links and headings stand out */
+.quill-editor .ql-editor h1,
+.quill-editor .ql-editor h2,
+.quill-editor .ql-editor h3 {
+  color: inherit;
+}
+
+/* Ensure images fit nicely */
+.quill-editor .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem 0;
+}

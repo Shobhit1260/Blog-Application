@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '../store/store'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import ReactQuill from 'react-quill'
+import DOMPurify from 'dompurify'
 
 export default function BlogDetail(){
   const { id } = useParams()
@@ -13,6 +15,9 @@ export default function BlogDetail(){
   const currentUser = useSelector(selectUser)
   const [post, setPost] = useState(null)
   const [comment, setComment] = useState('')
+  const [commentEmoji, setCommentEmoji] = useState('')
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const EMOJIS = ['😊','👍','🎉','❤️','😂','😮','😢','🔥','🙏','👏']
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [showCommentBox, setShowCommentBox] = useState(false)
@@ -40,6 +45,103 @@ export default function BlogDetail(){
     }
     if (id) load()
   }, [id, currentUser])
+
+  // Recursive comment item component
+  const CommentItem = ({ comment, depth = 0 }) => {
+    const [showReply, setShowReply] = useState(false)
+    const [replyText, setReplyText] = useState('')
+    const [replyEmoji, setReplyEmoji] = useState('')
+    const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false)
+
+    const onReplySubmit = async () => {
+      await postComment(replyText, comment._id, () => {
+        setReplyText('')
+        setReplyEmoji('')
+        setShowReply(false)
+      }, replyEmoji)
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.15 }}
+        style={{ marginLeft: depth * 20 }}
+        className="glass rounded-xl p-6 border border-gray-200 dark:border-gray-700"
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 flex-shrink-0">
+            {comment.user?.avatar ? (
+              <img src={comment.user.avatar} alt={comment.user?.username} className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                {comment.user?.username?.charAt(0)?.toUpperCase() || 'U'}
+              </div>
+            )}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {comment.user?.username || 'Anonymous'}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </span>
+            </div>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {comment.emoji && <span className="mr-2 text-lg align-middle">{comment.emoji}</span>}
+              {comment.comment}
+            </p>
+
+            <div className="mt-3 flex items-center gap-3">
+              {currentUser && (
+                <button onClick={() => setShowReply(!showReply)} className="text-sm text-cyan-600 dark:text-cyan-400 font-semibold">
+                  Reply
+                </button>
+              )}
+            </div>
+
+            {showReply && (
+              <div className="mt-3">
+                <textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800" />
+
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="relative">
+                    <button onClick={() => setShowReplyEmojiPicker(!showReplyEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md">🙂</button>
+                    {showReplyEmojiPicker && (
+                      <div className="absolute right-0 bottom-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2 grid grid-cols-5 gap-2">
+                        {EMOJIS.map(e => (
+                          <button key={e} onClick={() => { setReplyText(prev => prev + e); setReplyEmoji(e); setShowReplyEmojiPicker(false) }} className="px-2 py-1 text-lg">{e}</button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="ml-auto flex gap-2">
+                    <button onClick={onReplySubmit} className="px-4 py-2 bg-cyan-600 text-white rounded-md">Reply</button>
+                    <button onClick={() => { setShowReply(false); setReplyText(''); setReplyEmoji('') }} className="px-4 py-2 border rounded-md">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* children replies */}
+        {comment.children && comment.children.length > 0 && (
+          <div className="mt-4 space-y-4">
+            {comment.children.map((ch) => (
+              <CommentItem key={ch._id} comment={ch} depth={depth + 1} />
+            ))}
+          </div>
+        )}
+      </motion.div>
+    )
+  }
 
   const handleLike = async () => {
     if (!currentUser) {
@@ -129,11 +231,24 @@ export default function BlogDetail(){
       return
     }
     try {
-      await api.post(`/blogs/commentblog/${id}`, { comment })
+      await postComment(comment, null, () => { setComment(''); setShowCommentBox(false); setCommentEmoji('') }, commentEmoji)
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to post comment. Please login.')
+    }
+  }
+
+  // Post a comment or reply. If parentId is provided, it's treated as a reply.
+  const postComment = async (text, parentId = null, resetCb = null, emoji = '') => {
+    if (!text || !text.trim()) {
+      toast.error('Comment cannot be empty')
+      return
+    }
+    try {
+      await api.post(`/blogs/commentblog/${id}`, { comment: text, parentId, emoji })
       const res = await api.get(`/blogs/getblog/${id}`)
       setPost(res.data?.blog || res.blog)
-      setComment('')
-      setShowCommentBox(false)
+      if (resetCb) resetCb()
       toast.success('Comment posted!')
     } catch (e) {
       console.error(e)
@@ -456,9 +571,11 @@ export default function BlogDetail(){
         transition={{ delay: 0.6 }}
         className="prose prose-lg dark:prose-invert max-w-none mb-12"
       >
-        <div className="text-lg leading-relaxed whitespace-pre-wrap text-gray-800 dark:text-gray-200">
-          {post.content}
-        </div>
+        {/* Render sanitized HTML from the WYSIWYG editor */}
+        <div
+          className="text-lg leading-relaxed text-gray-800 dark:text-gray-200"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || '') }}
+        />
       </motion.div>
 
       {/* Divider */}
@@ -473,7 +590,7 @@ export default function BlogDetail(){
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-3xl font-bold">
-            Comments ({post.comments?.length || 0})
+            Comments ({post.comments ? post.comments.length : 0})
           </h3>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -494,39 +611,56 @@ export default function BlogDetail(){
               exit={{ opacity: 0, height: 0 }}
               className="mb-8 glass rounded-xl p-6 border border-gray-200 dark:border-gray-700"
             >
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Share your thoughts..."
-                rows={4}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition resize-none"
-              />
-              <div className="mt-4 flex gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={submitComment}
-                  className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg font-semibold"
-                >
-                  Post Comment
-                </motion.button>
-                <button
-                  onClick={() => {
-                    setShowCommentBox(false)
-                    setComment('')
-                  }}
-                  className="px-6 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-                >
-                  Cancel
-                </button>
-              </div>
+                  <div className="relative">
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Share your thoughts..."
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition resize-none"
+                    />
+
+                    <div className="absolute right-2 bottom-2 flex items-center gap-2">
+                      <div className="relative">
+                        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md">🙂</button>
+                        {showEmojiPicker && (
+                          <div className="absolute right-0 bottom-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2 grid grid-cols-5 gap-2">
+                            {EMOJIS.map(e => (
+                              <button key={e} onClick={() => { setComment(prev => prev + e); setCommentEmoji(e); setShowEmojiPicker(false) }} className="px-2 py-1 text-lg">{e}</button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={submitComment}
+                      className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg font-semibold"
+                    >
+                      Post Comment
+                    </motion.button>
+                    <button
+                      onClick={() => {
+                        setShowCommentBox(false)
+                        setComment('')
+                        setCommentEmoji('')
+                      }}
+                      className="px-6 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Comments List */}
         <div className="space-y-6">
-          {post.comments?.length === 0 ? (
+          {(!post.comments || post.comments.length === 0) ? (
             <div className="text-center py-12">
               <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -534,43 +668,9 @@ export default function BlogDetail(){
               <p className="text-gray-500 dark:text-gray-400">No comments yet. Be the first to comment!</p>
             </div>
           ) : (
-            post.comments?.map((c, idx) => (
-              <motion.div
-                key={c._id || idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * idx }}
-                className="glass rounded-xl p-6 border border-gray-200 dark:border-gray-700"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 flex-shrink-0">
-                    {c.user?.avatar ? (
-                      <img src={c.user.avatar} alt={c.user?.username} className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                        {c.user?.username?.charAt(0)?.toUpperCase() || 'U'}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">
-                        {c.user?.username || 'Anonymous'}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(c.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                      {c.comment}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+            // Render nested comments recursively
+            post.comments.map((c, idx) => (
+              <CommentItem key={c._id || idx} comment={c} depth={0} />
             ))
           )}
         </div>

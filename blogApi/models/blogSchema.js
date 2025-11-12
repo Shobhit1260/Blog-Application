@@ -28,6 +28,8 @@ const blogSchema= new mongoose.Schema({
     comments: [{
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         comment: { type: String, required: true },
+        emoji: { type: String, default: '' },
+        parentId: { type: mongoose.Schema.Types.ObjectId, default: null },
         createdAt: { type: Date, default: Date.now },
       }],
     views:{

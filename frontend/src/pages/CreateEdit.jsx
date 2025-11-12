@@ -1,5 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import '../styles/quill.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../utils/api'
@@ -251,22 +254,35 @@ export default function CreateEdit(){
                 )}
               </div>
 
-              {/* Content Editor */}
+              {/* Content Editor (WYSIWYG) */}
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
                   Content *
                 </label>
-                <textarea
-                  name="content"
+                <ReactQuill
+                  theme="snow"
                   value={formData.content}
-                  onChange={handleChange}
+                  onChange={(val) => setFormData({ ...formData, content: val })}
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, 3, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ list: 'ordered' }, { list: 'bullet' }],
+                      ['blockquote', 'code-block'],
+                      ['link', 'image'],
+                      ['clean']
+                    ]
+                  }}
+                  formats={[
+                    'header', 'bold', 'italic', 'underline', 'strike',
+                    'list', 'bullet', 'blockquote', 'code-block', 'link', 'image'
+                  ]}
                   placeholder="Tell your story..."
-                  rows={20}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition resize-none font-mono text-base leading-relaxed"
+                  className="bg-white dark:bg-gray-800 rounded-lg"
                 />
                 <div className="mt-2 flex items-center justify-between text-sm text-gray-500">
-                  <span>{formData.content.length} characters</span>
-                  <span>{formData.content.split(/\s+/).filter(w => w).length} words</span>
+                  <span>{(formData.content || '').replace(/<[^>]*>/g, '').length} characters</span>
+                  <span>{((formData.content || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length) || 0} words</span>
                 </div>
               </div>
             </div>
