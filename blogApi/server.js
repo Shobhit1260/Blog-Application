@@ -24,6 +24,9 @@ app.use('/api/users',userRoutes);
 
 app.use('/api/blogs',blogRoutes);
 app.use('/api', aiRoutes);
+app.get('/',(req,res)=>{
+    res.send('API is running....')
+})
 
 
 const port=process.env.PORT || 5000;
