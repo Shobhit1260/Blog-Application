@@ -1,5 +1,8 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../store/store'
+import { Link } from 'react-router-dom'
 import api from '../utils/api'
 import BlogCard from '../components/BlogCard'
 import Hero from '../components/Hero'
@@ -9,15 +12,12 @@ import dummyBlogs from '../data/dummyBlogs'
 export default function Home(){
   const [posts,setPosts]=useState([])
   const [loading,setLoading]=useState(true)
+  const currentUser = useSelector(selectUser)
 
   useEffect(()=>{
     const load = async ()=>{
       try{
-        const useDummy = import.meta.env.VITE_USE_DUMMY === '1'
-        if(useDummy){
-          setPosts(dummyBlogs)
-          return
-        }
+        
         const res = await api.get('/blogs/getblogs')
         const data = res.data?.blogs || res.blogs || res.data || []
         setPosts(data)
@@ -91,10 +91,34 @@ export default function Home(){
 
       <section className="container px-6 mt-12">
         <h2 className="text-2xl font-bold mb-4">Latest</h2>
-        {loading ? <p>Loading...</p> : (
-          <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-6">
-            {filtered.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
-          </div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <> 
+            {filtered.length === 0 ? (
+              <div className="w-full py-12 flex flex-col items-center justify-center border border-dashed rounded-lg bg-gray-50 dark:bg-gray-900/40">
+                <div className="text-3xl mb-3">😶‍🌫️</div>
+                <h3 className="text-xl font-semibold">No posts found</h3>
+                <p className="text-sm text-gray-500 mt-2 text-center max-w-xl">No posts match the selected category, tag, or search. Try clearing filters, or be the first to publish something awesome.</p>
+                <div className="mt-6">
+                  {/** Use selector to show CTA for logged-in users */}
+                  {/** get current user from redux */}
+                  {currentUser && currentUser._id ? (
+                    <Link to="/create" className="px-4 py-2 bg-cyan-600 text-white rounded-lg">Write the first post</Link>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Link to="/login" className="px-4 py-2 bg-cyan-600 text-white rounded-lg">Log in to write</Link>
+                      <Link to="/register" className="px-4 py-2 border rounded-lg">Register</Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-6">
+                {filtered.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>

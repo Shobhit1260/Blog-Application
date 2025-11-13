@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         } ,
     password:{
             type:String,
-            required:true,
+            required: function() { return !this.googleId && !this.githubId },
         },  
     profilePic:{
         type:String,
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"",
         maxlength:500,
-    },
+    }, 
     avatar:{
         type:String,
         default:"",
@@ -65,6 +65,15 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+        // OAuth IDs
+        googleId: {
+            type: String,
+            default: null,
+        },
+        githubId: {
+            type: String,
+            default: null,
+        },
     role:{
       type:String,
       enum:["user","admin"],

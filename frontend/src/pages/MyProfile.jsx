@@ -76,29 +76,6 @@ export default function MyProfile() {
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
-      // Use dummy data for demo
-      const dummyUser = {
-        username: 'John Doe',
-        email: 'john@example.com',
-        bio: 'Passionate writer and storyteller',
-        avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=fff&size=200',
-        location: 'New York, USA',
-        website: 'https://johndoe.com',
-        joinedDate: '2024-01-15',
-        postsCount: 12,
-        followersCount: 234,
-        followingCount: 89
-      }
-      setUser(dummyUser)
-      setFormData({
-        username: dummyUser.username,
-        email: dummyUser.email,
-        bio: dummyUser.bio,
-        avatar: dummyUser.avatar,
-        location: dummyUser.location,
-        website: dummyUser.website,
-        bgImage:'https://images.unsplash.com/photo-1557683316-973673baf926?w=1200',
-      })
     } finally {
       setLoading(false)
     }
@@ -126,7 +103,6 @@ export default function MyProfile() {
         res = await api.put('/users/updateprofile', formData)
       }
       if (res.status === 200) {
-        // Get the updated user from the API response
         const updatedUserData = res.data.user || formData
         console.log('Updated user data:', updatedUserData)
         

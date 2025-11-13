@@ -8,8 +8,24 @@ import api from '../utils/api'
 import { toast } from 'react-hot-toast'
 
 export default function BlogCard({ post, onDelete }){
-  const excerpt = (post.content || '').slice(0, 140)
-  const hasMore = (post.content || '').length > 140
+  // Convert HTML content to plain text for safe, tag-free excerpts
+  const stripHtml = (html) => {
+    if (!html) return ''
+    try {
+      if (typeof document !== 'undefined') {
+        const tmp = document.createElement('div')
+        tmp.innerHTML = html
+        return tmp.textContent || tmp.innerText || ''
+      }
+    } catch (e) {
+      // fallback to regex if DOM not available
+    }
+    return html.replace(/<[^>]+>/g, '')
+  }
+
+  const plain = stripHtml(post.content || '')
+  const excerpt = plain.slice(0, 140)
+  const hasMore = plain.length > 140
   const currentUser = useSelector(selectUser)
   const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)

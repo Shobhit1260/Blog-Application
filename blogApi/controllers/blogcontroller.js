@@ -27,6 +27,7 @@ exports.createblog=async(req,res)=>{
        if (req.file && req.file.buffer) {
            try {
                const result = await uploadStream(req.file.buffer, 'covers');
+               console.log('Cover image uploaded to Cloudinary:', result);
                // override coverImage with uploaded URL
                coverImage = result.secure_url;
            } catch (err) {

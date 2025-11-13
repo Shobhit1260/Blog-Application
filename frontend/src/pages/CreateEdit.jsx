@@ -466,6 +466,8 @@ export default function CreateEdit(){
                         setGenerating(true)
                         // Build a prompt based on the current title + optional categories/tags
                         let prompt = `Write a well-structured, SEO-friendly blog article titled "${formData.title}". Include an engaging introduction, 3-5 clear sections with headings, and a concise conclusion.`
+                        // Ask the model to return HTML so the WYSIWYG editor can render headings and emphasis directly.
+                        prompt += `\n\nIMPORTANT: Return only the article body in HTML. Use semantic tags: wrap the main title in <h1>, section headings in <h2>, paragraphs in <p>, use <em> for italic emphasis and <strong> for bold. Use <ul>/<li> for lists when appropriate. Do NOT include extra commentary or markdown code fences — only the raw HTML markup for the article body.`
                         if (formData.categories && formData.categories.length) {
                           prompt += ` Focus on: ${formData.categories.join(', ')}.`
                         }

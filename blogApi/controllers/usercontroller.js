@@ -255,8 +255,10 @@ exports.updateUserProfile = async (req, res) => {
             if (req.files.avatar && req.files.avatar[0]) {
                 try {
                     const file = req.files.avatar[0];
-                    const result = await uploadStream(file.buffer, 'avatars');
+                    console.log('file',file);
+                    const result = await uploadStream(file.buffer, 'avatar');
                     // overwrite avatar field with cloudinary url
+                    console.log('Avatar uploaded to Cloudinary:', result);
                     req.body.avatar = result.secure_url;
                 } catch (err) {
                     console.error('Avatar upload failed', err);

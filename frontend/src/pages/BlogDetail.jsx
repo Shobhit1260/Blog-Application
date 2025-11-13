@@ -21,6 +21,7 @@ export default function BlogDetail(){
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [showCommentBox, setShowCommentBox] = useState(false)
+  const [showComments, setShowComments] = useState(true)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -61,13 +62,16 @@ export default function BlogDetail(){
       }, replyEmoji)
     }
 
+    // Cap indentation to avoid horizontal overflow (maxDepth 4 -> max 80px)
+    const maxDepth = 4
+    const indent = Math.min(depth, maxDepth) * 20
     return (
       <motion.div
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.15 }}
-        style={{ marginLeft: depth * 20 }}
-        className="glass rounded-xl p-6 border border-gray-200 dark:border-gray-700"
+        style={{ paddingLeft: `${indent}px` }}
+        className="glass rounded-xl p-6 border border-gray-200 dark:border-gray-700 max-w-full overflow-hidden"
       >
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 flex-shrink-0">
@@ -92,8 +96,12 @@ export default function BlogDetail(){
                 })}
               </span>
             </div>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              {comment.emoji && <span className="mr-2 text-lg align-middle">{comment.emoji}</span>}
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed break-words whitespace-pre-wrap">
+              {comment.emoji && (
+                <span className="mr-3 inline-flex items-center justify-center text-2xl leading-none align-middle">
+                  {comment.emoji}
+                </span>
+              )}
               {comment.comment}
             </p>
 
@@ -111,11 +119,11 @@ export default function BlogDetail(){
 
                 <div className="flex items-center gap-2 mt-2">
                   <div className="relative">
-                    <button onClick={() => setShowReplyEmojiPicker(!showReplyEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md">🙂</button>
+                    <button onClick={() => setShowReplyEmojiPicker(!showReplyEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xl">🙂</button>
                     {showReplyEmojiPicker && (
                       <div className="absolute right-0 bottom-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2 grid grid-cols-5 gap-2">
                         {EMOJIS.map(e => (
-                          <button key={e} onClick={() => { setReplyText(prev => prev + e); setReplyEmoji(e); setShowReplyEmojiPicker(false) }} className="px-2 py-1 text-lg">{e}</button>
+                          <button key={e} onClick={() => { setReplyText(prev => prev + e); setReplyEmoji(e); setShowReplyEmojiPicker(false) }} className="px-2 py-1 text-2xl leading-none">{e}</button>
                         ))}
                       </div>
                     )}
@@ -592,19 +600,30 @@ export default function BlogDetail(){
           <h3 className="text-3xl font-bold">
             Comments ({post.comments ? post.comments.length : 0})
           </h3>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowCommentBox(!showCommentBox)}
-            className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg font-semibold shadow-lg"
-          >
-            Write a comment
-          </motion.button>
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setShowCommentBox(!showCommentBox); if (!showComments) setShowComments(true); }}
+              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg font-semibold shadow-lg"
+            >
+              Write a comment
+            </motion.button>
+            {showComments ? (
+              <button onClick={() => setShowComments(false)} className="px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg font-medium">
+                Close comments
+              </button>
+            ) : (
+              <button onClick={() => setShowComments(true)} className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg font-medium">
+                Show comments
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Comment Input Box */}
         <AnimatePresence>
-          {showCommentBox && (
+          {showCommentBox && showComments && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -621,17 +640,17 @@ export default function BlogDetail(){
                     />
 
                     <div className="absolute right-2 bottom-2 flex items-center gap-2">
-                      <div className="relative">
-                        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md">🙂</button>
-                        {showEmojiPicker && (
-                          <div className="absolute right-0 bottom-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2 grid grid-cols-5 gap-2">
-                            {EMOJIS.map(e => (
-                              <button key={e} onClick={() => { setComment(prev => prev + e); setCommentEmoji(e); setShowEmojiPicker(false) }} className="px-2 py-1 text-lg">{e}</button>
-                            ))}
-                          </div>
-                        )}
+                  <div className="relative">
+                    <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xl">🙂</button>
+                    {showEmojiPicker && (
+                      <div className="absolute right-0 bottom-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2 grid grid-cols-5 gap-2">
+                        {EMOJIS.map(e => (
+                          <button key={e} onClick={() => { setComment(prev => prev + e); setCommentEmoji(e); setShowEmojiPicker(false) }} className="px-2 py-1 text-2xl leading-none">{e}</button>
+                        ))}
                       </div>
-                    </div>
+                    )}
+                  </div>
+                </div>
                   </div>
 
                   <div className="mt-4 flex gap-3">
@@ -659,21 +678,29 @@ export default function BlogDetail(){
         </AnimatePresence>
 
         {/* Comments List */}
-        <div className="space-y-6">
-          {(!post.comments || post.comments.length === 0) ? (
-            <div className="text-center py-12">
-              <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <p className="text-gray-500 dark:text-gray-400">No comments yet. Be the first to comment!</p>
-            </div>
-          ) : (
-            // Render nested comments recursively
-            post.comments.map((c, idx) => (
-              <CommentItem key={c._id || idx} comment={c} depth={0} />
-            ))
-          )}
-        </div>
+        {showComments ? (
+          <div className="space-y-6">
+            {(!post.comments || post.comments.length === 0) ? (
+              <div className="text-center py-12">
+                <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <p className="text-gray-500 dark:text-gray-400">No comments yet. Be the first to comment!</p>
+              </div>
+            ) : (
+              // Render nested comments recursively
+              post.comments.map((c, idx) => (
+                <CommentItem key={c._id || idx} comment={c} depth={0} />
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="mb-6">
+            <button onClick={() => setShowComments(true)} className="px-4 py-2 border rounded-lg">
+              Show comments ({post.comments ? post.comments.length : 0})
+            </button>
+          </div>
+        )}
       </motion.section>
 
       {/* Related Posts / Back to Home */}
