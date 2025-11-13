@@ -1,10 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 
-// Simple authentication middleware
-// - Accepts token from `Authorization: Bearer <token>` or cookie `Token`
-// - Verifies JWT using process.env.SECRET_KEY
-// - Attaches `req.user` (without password) for downstream handlers
 const protect = async (req, res, next) => {
   let token;
 
