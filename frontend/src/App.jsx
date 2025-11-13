@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
-import AuthSuccess from './pages/AuthSuccess'
 import BlogDetail from './pages/BlogDetail'
 import CreateEdit from './pages/CreateEdit'
 import Login from './pages/Login'
@@ -32,7 +31,6 @@ export default function App(){
           <Route path="/create" element={<CreateEdit/>} />
           <Route path="/edit/:id" element={<CreateEdit/>} />
           <Route path="/login" element={<Login/>} />
-          <Route path="/auth/success" element={<AuthSuccess/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/reset-password/:token" element={<ResetPassword/>} />
           <Route path="/profile" element={<MyProfile/>} />
