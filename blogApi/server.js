@@ -12,7 +12,13 @@ dotenv.config();
 connectDB();
 const app=express();
 
-app.use(cors({ origin: true, credentials: true }));
+// Use explicit CORS origin in production; in development allow the dev server
+// origin to be reflected which simplifies local testing with Vite proxy.
+const corsOptions = process.env.NODE_ENV === 'production'
+    ? { origin: process.env.FRONTEND_URL || 'https://blog.shobhitsri.me', credentials: true }
+    : { origin: true, credentials: true };
+
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
@@ -20,16 +26,18 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/users',userRoutes);
-
-app.use('/api/blogs',blogRoutes);
-app.use('/api', aiRoutes);
-app.get('/',(req,res)=>{
-    res.send('API is running....')
-})
+ 
 
 
 const port=process.env.PORT || 5000;
+
+// Simple health check
+app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+// Mount routes
+app.use('/api/users', userRoutes);
+app.use('/api/blogs', blogRoutes);
+app.use('/api', aiRoutes);
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);

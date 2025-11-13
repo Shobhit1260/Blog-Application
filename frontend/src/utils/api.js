@@ -1,11 +1,7 @@
 const API = (path, opts = {}) => {
-  // Use Vite env variable when available, otherwise default to local backend on port 5000
-  const apiRoot = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
-    ? import.meta.env.VITE_API_URL
-    : 'http://localhost:5000'
-  const base = apiRoot.replace(/\/+$/, '') + '/api'
-  // const base ='https://blogapi.shobhitsri.me/api'
-  const url = base + path
+
+
+ const url= 'https://blogapi.shobhitsri.me/api'+ path;
   const options = Object.assign({
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' }

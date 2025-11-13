@@ -1,7 +1,7 @@
 const express=require("express");
 const router=express.Router();
 const {createblog,getblogs,getblog,updateblog,deleteblog,likeblog,commentblog,getMyPosts}=require("../controllers/blogcontroller");
-const protect=require("../middleware/auth")
+const protect=require("../middleware/auth.js")
 const upload = require('../middleware/multer')
 
 

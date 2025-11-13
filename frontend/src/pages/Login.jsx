@@ -7,6 +7,13 @@ import api from '../utils/api'
 import toast from 'react-hot-toast'
 import { setUser } from '../store/userSlice'
 
+// Normalize VITE_API_URL so we don't accidentally produce /api/api when env contains /api
+const _rawApiRoot = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+  ? import.meta.env.VITE_API_URL
+  : 'http://localhost:5000'
+const _apiRoot = _rawApiRoot.replace(/\/+$/,'').replace(/\/api$/i,'')
+const OAUTH_BASE = _apiRoot + '/api/auth'
+
 export default function Login(){
   const dispatch = useDispatch()
   const [mode, setMode] = useState('login') // 'login' or 'register'
@@ -67,7 +74,7 @@ export default function Login(){
           email: formData.email,
           password: formData.password
         })
-
+      
         const data = await api.get('/users/me');
         const user = data.data.user;
         console.log("user on login", user);
@@ -263,7 +270,7 @@ export default function Login(){
 
             <div className="mt-4 grid grid-cols-2 gap-3">
               <a
-                href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google`}
+                href={`${OAUTH_BASE}/google`}
                 className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -275,7 +282,7 @@ export default function Login(){
                 <span className="ml-2 text-sm font-medium">Google</span>
               </a>
               <a
-                href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/github`}
+                href={`${OAUTH_BASE}/github`}
                 className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
