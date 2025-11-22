@@ -6,6 +6,7 @@ import api from '../utils/api'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { selectUser } from '../store/store'
 import { updateUser } from '../store/userSlice'
+import { Link } from 'react-router-dom'
 
 export default function MyProfile() {
   const navigate = useNavigate()
@@ -27,6 +28,7 @@ export default function MyProfile() {
   const [bgFile, setBgFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState('')
   const [bgPreview, setBgPreview] = useState('')
+  const [posts, setPosts] = useState([])
 
   // Create object URL previews for selected files and clean up
   useEffect(() => {
@@ -57,6 +59,7 @@ export default function MyProfile() {
 
   useEffect(() => {
     fetchProfile()
+    fetchMyPosts()
   }, [])
 
   const fetchProfile = async () => {
@@ -78,6 +81,17 @@ export default function MyProfile() {
       console.error('Error fetching profile:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchMyPosts = async () => {
+    try {
+      const res = await api.get('/blogs/myposts')
+      if (res.status === 200) {
+        setPosts(res.data.blogs || [])
+      }
+    } catch (error) {
+      console.error('Error fetching my posts:', error)
     }
   }
 
@@ -220,6 +234,24 @@ export default function MyProfile() {
                 <div className="text-sm text-gray-600 dark:text-gray-400">Following</div>
               </div>
             </div>
+
+            {/* Recent posts (preview) */}
+            {posts && posts.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recent posts</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {posts.slice(0, 3).map((p) => (
+                    <Link to={`/post/${p._id}`} key={p._id} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg hover:shadow-md transition">
+                      <div className="text-sm text-gray-500 mb-1">{new Date(p.createdAt).toLocaleDateString()}</div>
+                      <div className="font-semibold text-gray-900 dark:text-white line-clamp-2">{p.title}</div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <Link to="/my-posts" className="text-sm text-indigo-600 hover:underline">View all my posts</Link>
+                </div>
+              </div>
+            )}
 
             {/* Profile Form */}
             <form onSubmit={handleUpdateProfile}>

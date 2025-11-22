@@ -62,7 +62,6 @@ export default function BlogDetail(){
       }, replyEmoji)
     }
 
-    // Cap indentation to avoid horizontal overflow (maxDepth 4 -> max 80px)
     const maxDepth = 4
     const indent = Math.min(depth, maxDepth) * 20
     return (
@@ -172,6 +171,14 @@ export default function BlogDetail(){
   }
 
   const getShareUrl = () => {
+    // Prefer explicit frontend origin from env so shares use your production domain
+    const envOrigin = import.meta.env.VITE_FRONTEND_URL || import.meta.env.VITE_SITE_URL
+    // Fallback to window.location.origin when env is not configured
+    const origin = envOrigin ? String(envOrigin).replace(/\/+$/, '') : window.location?.origin || ''
+    if (post && post._id) {
+      return `${origin}/post/${post._id}`
+    }
+    // final fallback
     return window.location.href
   }
 

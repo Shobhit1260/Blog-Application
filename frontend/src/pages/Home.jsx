@@ -81,7 +81,6 @@ export default function Home(){
       <section className="container px-6 mt-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Featured stories</h2>
-          <a className="text-sm text-cyan-600" href="/feed">See all</a>
         </div>
 
         <motion.div layout className="grid md:grid-cols-3 gap-6">

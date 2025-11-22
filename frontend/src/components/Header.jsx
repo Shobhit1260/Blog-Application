@@ -52,13 +52,13 @@ export default function Header(){
             <motion.div 
               whileHover={{ rotate: 360, scale: 1.1 }}
               transition={{ duration: 0.6, type: "spring" }}
-              className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/50 transition-shadow"
+              className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 via-cyan-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-2xl group-hover:shadow-teal-500/50 transition-shadow"
             >
               <span className="text-xl">✍️</span>
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-600 to-cyan-500 opacity-0 group-hover:opacity-100 blur transition-opacity"></div>
             </motion.div>
             <div className="flex flex-col">
-              <span className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent tracking-tight">
+              <span className="text-2xl font-black bg-gradient-to-r from-teal-600 via-cyan-500 to-cyan-600 bg-clip-text text-transparent tracking-tight">
                 Blogger
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 font-medium -mt-1">Share Your Story</span>
@@ -92,15 +92,7 @@ export default function Header(){
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
           </motion.div>
           
-          <motion.div whileHover={{ y: -2 }} className="relative group">
-            <Link 
-              to="/feed" 
-              className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50"
-            >
-              Feed
-            </Link>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-          </motion.div>
+          {/* Feed removed per design update */}
           
           {isLoggedIn && (
             <motion.div

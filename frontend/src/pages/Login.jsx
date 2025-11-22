@@ -8,9 +8,8 @@ import toast from 'react-hot-toast'
 import { setUser } from '../store/userSlice'
 
 // Normalize VITE_API_URL so we don't accidentally produce /api/api when env contains /api
-const _rawApiRoot = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
-  ? import.meta.env.VITE_API_URL
-  : 'http://localhost:5000'
+const _rawApiRoot =  import.meta.env.VITE_API_URL
+  || 'http://localhost:5000'
 const _apiRoot = _rawApiRoot.replace(/\/+$/,'').replace(/\/api$/i,'')
 const OAUTH_BASE = _apiRoot + '/api/auth'
 

@@ -31,9 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const port=process.env.PORT || 5000;
 
-// Simple health check
-app.get('/api/health', (req, res) => res.json({ ok: true }));
-
 // Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/blogs', blogRoutes);

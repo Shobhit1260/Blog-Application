@@ -195,9 +195,15 @@ export default function Contact() {
             <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 text-center">
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Looking for quick answers?</h4>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">Check out our FAQ page for common questions</p>
-              <a href="/faq" className="inline-block px-6 py-2 bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 rounded-lg font-semibold hover:shadow-lg transition-shadow">
+              <button
+                type="button"
+                aria-disabled="true"
+                disabled
+                className="inline-block px-6 py-2 bg-white text-teal-600 rounded-lg font-semibold opacity-60 cursor-not-allowed"
+                title="FAQ coming soon"
+              >
                 Visit FAQ
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>

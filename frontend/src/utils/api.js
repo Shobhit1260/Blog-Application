@@ -1,6 +1,5 @@
 const API = (path, opts = {}) => {
 
-
  const url= 'https://blogapi.shobhitsri.me/api'+ path;
   const options = Object.assign({
     credentials: 'include',
@@ -33,4 +32,4 @@ const post = (p, body) => API(p, { method: 'POST', body })
 const put = (p, body) => API(p, { method: 'PUT', body })
 const del = (p) => API(p, { method: 'DELETE' })
 
-export default { get, post, put, del }
+export default { get, post, put, del};
