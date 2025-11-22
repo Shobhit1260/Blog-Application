@@ -168,7 +168,7 @@ export default function MyProfile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-visible"
         >
           {/* Cover Image */}
           <div className="relative h-48 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
@@ -195,7 +195,7 @@ export default function MyProfile() {
 
           <div className="px-8 pb-8">
             {/* Avatar */}
-              <div className="relative -mt-16 mb-6">
+              <div className="relative -mt-16 mb-6 z-10">
               <img
                 src={
                   avatarPreview || formData.avatar || 'https://ui-avatars.com/api/?name=User&background=6366f1&color=fff&size=200'
