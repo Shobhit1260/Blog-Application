@@ -21,10 +21,7 @@ export default function Header(){
     dispatch(initializeUser())
   }, [dispatch])
 
-  // Debug: Log user changes
-  useEffect(() => {
-    console.log('Header - User updated:', user)
-  }, [user])
+  
 
   const handleLogout = async () => {
     try {
@@ -115,6 +112,7 @@ export default function Header(){
             <ThemeToggle />
             
             {isLoggedIn ? (
+              console.log("user",user),
               <div className="relative">
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}

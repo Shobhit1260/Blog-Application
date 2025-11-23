@@ -34,7 +34,7 @@ export default function Profile(){
         setProfile(res.data.user)
         setIsFollowing(res.data.user.isFollowing || false)
       }
-
+     console.log(res.data.user);
       // Fetch user's posts
       const blogsRes = await api.get('/blogs/getblogs')
       if(blogsRes.status === 200){

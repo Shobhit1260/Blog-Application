@@ -12,6 +12,16 @@ dotenv.config();
 connectDB();
 const app=express();
 
+// Initialize Passport (Google OAuth) and mount auth routes
+try {
+    const initPassport = require('./config/passport');
+    const authRoutes = require('./routes/authRoutes');
+    initPassport(app);
+    app.use('/api/auth', authRoutes);
+} catch (err) {
+    console.warn('Auth routes not mounted:', err && err.message ? err.message : err);
+}
+
 // Use explicit CORS origin in production; in development allow the dev server
 // origin to be reflected which simplifies local testing with Vite proxy.
 const corsOptions = process.env.NODE_ENV === 'production'

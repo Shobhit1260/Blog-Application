@@ -19,8 +19,36 @@ import Privacy from './pages/Privacy'
 import Guidelines from './pages/Guidelines'
 import Cookies from './pages/Cookies'
 import { Toaster } from 'react-hot-toast'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import api from './utils/api'
+import { setUser, initializeUser, setLoading } from './store/userSlice'
 
 export default function App(){
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    // Initialize from localStorage first
+    dispatch(initializeUser())
+
+    // Try to refresh user from server using cookie (sent via credentials)
+    const fetchMe = async () => {
+      try {
+        dispatch(setLoading(true))
+        const res = await api.get('/users/me')
+        if (res.status === 200 && res.data && res.data.user) {
+          dispatch(setUser(res.data.user))
+        }
+      } catch (err) {
+        // ignore if not authenticated
+        console.debug('Not authenticated or failed to fetch /users/me', err)
+      } finally {
+        dispatch(setLoading(false))
+      }
+    }
+
+    fetchMe()
+  }, [dispatch])
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
       <Header />
