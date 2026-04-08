@@ -29,76 +29,63 @@ export default function Footer(){
   }, [user])
 
   return (
-    <footer className="mt-20 bg-white border-t border-gray-100 text-gray-700 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8 items-start">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-3 group">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-600 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-md transition-transform transform group-hover:scale-105">
+    <footer className="mt-20 border-t border-slate-200/70 dark:border-slate-800/80 text-slate-700 dark:text-slate-200">
+      <div className="container py-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div className="md:col-span-6 lg:col-span-5">
+            <Link to="/" className="flex items-center gap-3 mb-4 group">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-md transition-transform group-hover:scale-105">
                 B
               </div>
               <div>
-                <div className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Blogger</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">Readable stories, crafted for people.</div>
+                <div className="text-lg font-bold text-slate-900 dark:text-white">Blogger</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Readable stories, crafted for people.</div>
               </div>
             </Link>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mb-4">Publish long-form content with an emphasis on clarity, accessibility and delightful reading experience. Your words, clearly presented.</p>
-
-            <div className="flex items-center gap-3 mt-4">
-              <Link to="/about" className="text-sm text-gray-600 hover:text-teal-600">About</Link>
-              <Link to="/contact" className="text-sm text-gray-600 hover:text-teal-600">Contact</Link>
-            </div>
+            <p className="max-w-md text-slate-600 dark:text-slate-400 leading-7">A calmer reading experience for long-form posts, with spacing and typography tuned to feel closer to an editorial product than a dashboard.</p>
           </div>
 
-          {/* Quick Links */}
-          <div className="">
-            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Explore</h4>
-            <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-              <li><Link to="/" className="hover:text-teal-600">Discover</Link></li>
-              <li><Link to="/create" className="hover:text-teal-600">Write a story</Link></li>
-              <li><Link to="/my-posts" className="hover:text-teal-600">My Posts</Link></li>
+          <div className="md:col-span-3 lg:col-span-2">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-4">Explore</h4>
+            <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+              <li><Link to="/" className="hover:text-teal-700 dark:hover:text-teal-400">Discover</Link></li>
+              <li><Link to="/create" className="hover:text-teal-700 dark:hover:text-teal-400">Write a story</Link></li>
+              <li><Link to="/my-posts" className="hover:text-teal-700 dark:hover:text-teal-400">My Posts</Link></li>
             </ul>
           </div>
 
-          {/* Recent Posts (for logged-in user) */}
-          <div>
-            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Recent Posts</h4>
-            {!user && (
-              <div className="text-sm text-gray-600 dark:text-gray-400">Log in to see your recent posts</div>
-            )}
-            {user && posts.length === 0 && (
-              <div className="text-sm text-gray-600 dark:text-gray-400">No recent posts</div>
-            )}
-            <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+          <div className="md:col-span-3 lg:col-span-2">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-4">Recent</h4>
+            {!user && <div className="text-sm text-slate-500 dark:text-slate-400">Log in to see your recent posts.</div>}
+            {user && posts.length === 0 && <div className="text-sm text-slate-500 dark:text-slate-400">No recent posts yet.</div>}
+            <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300 mt-3">
               {posts.slice(0,3).map(p => (
-                <li key={p._id} className="text-sm">
-                  <Link to={`/post/${p._id}`} className="hover:text-teal-600 dark:hover:text-teal-400 block truncate">{p.title}</Link>
+                <li key={p._id}>
+                  <Link to={`/post/${p._id}`} className="block truncate hover:text-teal-700 dark:hover:text-teal-400">{p.title}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Legal</h4>
-            <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-              <li><Link to="/privacy" className="hover:text-teal-600">Privacy</Link></li>
-              <li><Link to="/terms" className="hover:text-teal-600">Terms</Link></li>
-              <li><Link to="/cookies" className="hover:text-teal-600">Cookies</Link></li>
+          <div className="md:col-span-12 lg:col-span-3">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-4">Legal</h4>
+            <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+              <li><Link to="/privacy" className="hover:text-teal-700 dark:hover:text-teal-400">Privacy</Link></li>
+              <li><Link to="/terms" className="hover:text-teal-700 dark:hover:text-teal-400">Terms</Link></li>
+              <li><Link to="/cookies" className="hover:text-teal-700 dark:hover:text-teal-400">Cookies</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">© {currentYear} Blogger — Built with care for readers and creators.</p>
+        <div className="mt-10 pt-8 border-t border-slate-200/70 dark:border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-slate-500 dark:text-slate-400">© {currentYear} Blogger. Built with care for readers and creators.</p>
 
           <nav className="flex items-center gap-4 text-sm">
-            <Link to="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-teal-600">Privacy</Link>
-            <span className="hidden md:block text-gray-300 dark:text-gray-700">•</span>
-            <Link to="/terms" className="text-gray-600 dark:text-gray-300 hover:text-teal-600">Terms</Link>
-            <span className="hidden md:block text-gray-300 dark:text-gray-700">•</span>
-            <Link to="/contact" className="text-gray-600 dark:text-gray-300 hover:text-teal-600">Contact</Link>
+            <Link to="/privacy" className="text-slate-500 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400">Privacy</Link>
+            <span className="hidden md:block text-slate-300 dark:text-slate-700">•</span>
+            <Link to="/terms" className="text-slate-500 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400">Terms</Link>
+            <span className="hidden md:block text-slate-300 dark:text-slate-700">•</span>
+            <Link to="/contact" className="text-slate-500 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400">Contact</Link>
           </nav>
         </div>
       </div>

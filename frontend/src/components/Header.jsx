@@ -41,55 +41,41 @@ export default function Header(){
     <motion.header 
       initial={{ y:-20, opacity:0 }} 
       animate={{ y:0, opacity:1 }} 
-      className="glass sticky top-4 z-40 mx-4 rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80"
+      className="page-surface sticky top-4 z-40 mx-4 rounded-2xl"
     >
-      <div className="container px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-3 group">
+      <div className="container py-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <motion.div 
               whileHover={{ rotate: 360, scale: 1.1 }}
               transition={{ duration: 0.6, type: "spring" }}
-              className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 via-cyan-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-2xl group-hover:shadow-teal-500/50 transition-shadow"
+              className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-700 via-teal-500 to-cyan-500 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-xl transition-shadow"
             >
-              <span className="text-xl">✍️</span>
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-600 to-cyan-500 opacity-0 group-hover:opacity-100 blur transition-opacity"></div>
+              <span className="text-xl">B</span>
             </motion.div>
             <div className="flex flex-col">
-              <span className="text-2xl font-black bg-gradient-to-r from-teal-600 via-cyan-500 to-cyan-600 bg-clip-text text-transparent tracking-tight">
+              <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                 Blogger
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium -mt-1">Share Your Story</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium -mt-1">Calm writing space</span>
             </div>
           </Link>
-          <div className="hidden lg:block">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity"></div>
-              <div className="relative flex items-center">
-                <svg className="absolute left-3 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input 
-                  aria-label="search" 
-                  placeholder="Search stories, tags or authors..." 
-                  className="pl-10 pr-4 py-2.5 w-80 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/20 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                />
-              </div>
-            </div>
+          <div className="hidden lg:flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+            <span className="h-2 w-2 rounded-full bg-teal-500"></span>
+            <span>Read, write, and publish with less noise</span>
           </div>
         </div>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-2 sm:gap-3">
           <motion.div whileHover={{ y: -2 }} className="relative group">
             <Link 
               to="/" 
-              className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50"
+              className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 transition-colors rounded-full hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
             >
               Discover
             </Link>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            <div className="absolute bottom-0 left-4 right-4 h-px bg-teal-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
           </motion.div>
-          
-          {/* Feed removed per design update */}
           
           {isLoggedIn && (
             <motion.div
@@ -98,7 +84,7 @@ export default function Header(){
             >
               <Link 
                 to="/create" 
-                className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-cyan-500/30 transition-all font-semibold"
+                className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-full shadow-sm hover:shadow-md transition-all font-semibold"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -112,18 +98,17 @@ export default function Header(){
             <ThemeToggle />
             
             {isLoggedIn ? (
-              console.log("user",user),
               <div className="relative">
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-cyan-500 dark:hover:border-cyan-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all shadow-sm hover:shadow-md"
+                  className="flex items-center gap-2 px-3 py-2 rounded-full border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 hover:border-teal-500 transition-all shadow-sm hover:shadow-md"
                 >
                   {user?.avatar ? (
                     <img src={user.avatar} alt={user.username} className="w-9 h-9 rounded-full object-cover ring-2 ring-white dark:ring-gray-800" />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-white dark:ring-gray-800 shadow-lg">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-white dark:ring-gray-800 shadow-lg">
                       {user?.username?.charAt(0).toUpperCase() || 'U'}
                     </div>
                   )}
@@ -147,14 +132,14 @@ export default function Header(){
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ type: "spring", duration: 0.3 }}
-                      className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden backdrop-blur-xl"
+                      className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden backdrop-blur-xl"
                     >
-                      <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-br from-indigo-50 to-cyan-50 dark:from-gray-800 dark:to-gray-800">
+                      <div className="px-4 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-3">
                           {user?.avatar ? (
                             <img src={user.avatar} alt={user.username} className="w-12 h-12 rounded-full object-cover ring-2 ring-white dark:ring-gray-700 shadow-md" />
                           ) : (
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center text-white text-lg font-bold ring-2 ring-white dark:ring-gray-700 shadow-md">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-lg font-bold ring-2 ring-white dark:ring-gray-700 shadow-md">
                               {user?.username?.charAt(0).toUpperCase() || 'U'}
                             </div>
                           )}
@@ -169,10 +154,10 @@ export default function Header(){
                         <motion.div whileHover={{ x: 4 }}>
                           <Link
                             to="/profile"
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 dark:hover:from-gray-700 dark:hover:to-gray-700 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
@@ -184,10 +169,10 @@ export default function Header(){
                         <motion.div whileHover={{ x: 4 }}>
                           <Link
                             to="/my-posts"
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-gray-700 dark:hover:to-gray-700 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
@@ -199,10 +184,10 @@ export default function Header(){
                         <motion.div whileHover={{ x: 4 }}>
                           <Link
                             to="/settings"
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-700 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-600 to-sky-600 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -222,7 +207,7 @@ export default function Header(){
                           }}
                           className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all group"
                         >
-                          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
@@ -239,7 +224,7 @@ export default function Header(){
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/login')}
-                className="relative px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 text-white rounded-xl shadow-lg hover:shadow-2xl hover:shadow-cyan-500/30 transition-all font-semibold overflow-hidden group"
+                className="relative px-6 py-2.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-full shadow-sm hover:shadow-md transition-all font-semibold overflow-hidden group"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +232,7 @@ export default function Header(){
                   </svg>
                   Sign in
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-teal-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </motion.button>
             )}
           </div>

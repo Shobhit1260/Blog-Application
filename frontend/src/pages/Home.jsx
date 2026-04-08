@@ -7,7 +7,6 @@ import api from '../utils/api'
 import BlogCard from '../components/BlogCard'
 import Hero from '../components/Hero'
 import { motion } from 'framer-motion'
-import dummyBlogs from '../data/dummyBlogs'
 
 export default function Home(){
   const [posts,setPosts]=useState([])
@@ -22,8 +21,8 @@ export default function Home(){
         const data = res.data?.blogs || res.blogs || res.data || []
         setPosts(data)
       }catch(e){
-        console.error('API failed, falling back to dummy data', e)
-        setPosts(dummyBlogs)
+        console.error('API failed to load blogs', e)
+        setPosts([])
       }
       finally{setLoading(false)}
     }
@@ -52,69 +51,77 @@ export default function Home(){
   })
 
   const featured = filtered.slice(0,3)
+  const latest = filtered.slice(3)
 
   return (
-    <div>
+    <div className="space-y-12 lg:space-y-16">
       <Hero />
 
-      <section className="container px-6 mt-6">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row items-center gap-3 mb-4">
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <select value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} className="border rounded px-3 py-2 bg-white dark:bg-gray-800">
+      <section className="container">
+        <div className="page-surface rounded-[2rem] p-4 sm:p-5 lg:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="section-kicker mb-2">Discover</div>
+              <h2 className="section-heading text-2xl sm:text-3xl text-slate-950 dark:text-white">Browse by topic, tag, or keyword</h2>
+              <p className="mt-2 max-w-2xl text-slate-600 dark:text-slate-400">Keep the feed focused by narrowing to the stories you want to read next.</p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <select value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} className="min-w-0 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900">
               <option value="">All categories</option>
               {allCategories.map(c=> <option key={c} value={c}>{c}</option>)}
             </select>
-            <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)} className="border rounded px-3 py-2 bg-white dark:bg-gray-800">
+              <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)} className="min-w-0 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900">
               <option value="">All tags</option>
               {allTags.map(t=> <option key={t} value={t}>{t}</option>)}
             </select>
-          </div>
-
-          <div className="flex items-center gap-2 ml-auto w-full md:w-1/3">
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search posts..." className="flex-1 border rounded px-3 py-2 bg-white dark:bg-gray-800" />
-            <button onClick={()=>{setCategoryFilter(''); setTagFilter(''); setSearch('')}} className="px-3 py-2 bg-cyan-600 text-white rounded">Clear</button>
+              <div className="flex items-center gap-2 w-full sm:w-[22rem]">
+                <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search posts..." className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900" />
+                <button onClick={()=>{setCategoryFilter(''); setTagFilter(''); setSearch('')}} className="rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white dark:bg-white dark:text-slate-900">Clear</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="container px-6 mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Featured stories</h2>
+      <section className="container">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <div className="section-kicker mb-2">Featured</div>
+            <h2 className="section-heading text-2xl sm:text-3xl text-slate-950 dark:text-white">Stories worth your attention</h2>
+          </div>
         </div>
 
-        <motion.div layout className="grid md:grid-cols-3 gap-6">
+        <motion.div layout className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           {featured.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
         </motion.div>
       </section>
 
-      <section className="container px-6 mt-12">
-        <h2 className="text-2xl font-bold mb-4">Latest</h2>
+      <section className="container">
+        <div className="mb-5">
+          <div className="section-kicker mb-2">Latest</div>
+          <h2 className="section-heading text-2xl sm:text-3xl text-slate-950 dark:text-white">Recent writing from the community</h2>
+        </div>
         {loading ? (
-          <p>Loading...</p>
+          <p className="text-slate-500 dark:text-slate-400">Loading...</p>
         ) : (
           <> 
             {filtered.length === 0 ? (
-              <div className="w-full py-12 flex flex-col items-center justify-center border border-dashed rounded-lg bg-gray-50 dark:bg-gray-900/40">
-                <div className="text-3xl mb-3">😶‍🌫️</div>
-                <h3 className="text-xl font-semibold">No posts found</h3>
-                <p className="text-sm text-gray-500 mt-2 text-center max-w-xl">No posts match the selected category, tag, or search. Try clearing filters, or be the first to publish something awesome.</p>
+              <div className="page-surface rounded-[2rem] py-16 flex flex-col items-center justify-center text-center">
+                <div className="text-3xl mb-3">No results</div>
+                <h3 className="text-xl font-semibold text-slate-950 dark:text-white">No posts found</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 text-center max-w-xl">Try clearing the filters or search terms to widen the feed again.</p>
                 <div className="mt-6">
-                  {/** Use selector to show CTA for logged-in users */}
-                  {/** get current user from redux */}
                   {currentUser && currentUser._id ? (
-                    <Link to="/create" className="px-4 py-2 bg-cyan-600 text-white rounded-lg">Write the first post</Link>
+                    <Link to="/create" className="px-5 py-2.5 bg-slate-900 text-white rounded-full dark:bg-white dark:text-slate-900">Write the first post</Link>
                   ) : (
-                    <div className="flex items-center gap-3">
-                      <Link to="/login" className="px-4 py-2 bg-cyan-600 text-white rounded-lg">Log in to write</Link>
-                      <Link to="/register" className="px-4 py-2 border rounded-lg">Register</Link>
-                    </div>
+                    <Link to="/login" className="px-5 py-2.5 bg-slate-900 text-white rounded-full dark:bg-white dark:text-slate-900">Log in to write</Link>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-6">
-                {filtered.map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {(latest.length ? latest : filtered).map(p=> <BlogCard key={p._id} post={p} onDelete={handlePostDeleted} />)}
               </div>
             )}
           </>

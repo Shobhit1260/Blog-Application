@@ -50,9 +50,9 @@ export default function App(){
     fetchMe()
   }, [dispatch])
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+    <div className="min-h-screen flex flex-col text-slate-900 dark:text-slate-100 bg-[radial-gradient(circle_at_top,rgba(14,165,164,0.10),transparent_32%),linear-gradient(180deg,#fbfaf8_0%,#f5f1ea_100%)] dark:bg-[radial-gradient(circle_at_top,rgba(14,165,164,0.12),transparent_34%),linear-gradient(180deg,#07111f_0%,#0b1220_100%)]">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/post/:id" element={<BlogDetail/>} />

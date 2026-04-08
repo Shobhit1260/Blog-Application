@@ -52,9 +52,9 @@ export default function BlogCard({ post, onDelete }){
   return (
     <>
     <motion.article 
-      whileHover={{ y: -8, scale: 1.02 }} 
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }} 
-      className="group bg-white dark:bg-gray-800 rounded-xl card-shadow hover:shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700 relative"
+      whileHover={{ y: -4 }} 
+      transition={{ type: 'spring', stiffness: 280, damping: 24 }} 
+      className="group page-surface-strong rounded-[1.75rem] overflow-hidden relative"
     >
       {/* Delete button for author */}
       {isAuthor && (
@@ -63,7 +63,7 @@ export default function BlogCard({ post, onDelete }){
             e.preventDefault()
             setShowDeleteModal(true)
           }}
-          className="absolute top-4 right-4 z-10 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors"
+          className="absolute top-4 right-4 z-10 p-2 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-colors"
           title="Delete post"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,11 +78,11 @@ export default function BlogCard({ post, onDelete }){
             <img 
               src={post.coverImage} 
               alt={post.title} 
-              className="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-56 object-cover transform group-hover:scale-[1.03] transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-52 bg-gradient-to-br from-indigo-100 via-purple-50 to-cyan-50 dark:from-indigo-900/30 dark:via-purple-900/20 dark:to-cyan-900/30 flex items-center justify-center">
-              <svg className="w-16 h-16 text-indigo-300 dark:text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-full h-56 bg-gradient-to-br from-slate-100 via-white to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-teal-900/20 flex items-center justify-center">
+              <svg className="w-16 h-16 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
@@ -90,14 +90,14 @@ export default function BlogCard({ post, onDelete }){
         </div>
       </Link>
 
-      <div className="p-6">
+      <div className="p-6 sm:p-7">
         {/* Category/Tags */}
         {(post.categories || post.tags) && (
-          <div className="mb-3 flex items-center gap-2">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
             {(post.categories || post.tags || []).slice(0, 2).map((item, i) => (
               <span 
                 key={i} 
-                className="px-2.5 py-1 bg-gradient-to-r from-indigo-50 to-cyan-50 dark:from-indigo-900/30 dark:to-cyan-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-full tracking-wide uppercase"
+                className="px-2.5 py-1 bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300 text-xs font-semibold rounded-full tracking-wide uppercase"
               >
                 {item}
               </span>
@@ -106,24 +106,24 @@ export default function BlogCard({ post, onDelete }){
         )}
 
         {/* Title */}
-        <h3 className="mb-3 text-xl md:text-2xl font-bold leading-tight tracking-tight group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+        <h3 className="mb-3 text-xl md:text-[1.45rem] font-bold leading-tight tracking-tight text-slate-950 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">
           <Link to={`/post/${post._id}`} className="text-balance">
             {post.title}
           </Link>
         </h3>
 
         {/* Excerpt */}
-        <p className="mb-4 text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+        <p className="mb-5 text-slate-600 dark:text-slate-300 leading-7 line-clamp-3">
           {excerpt}{hasMore && '...'}
         </p>
 
         {/* Author & Date */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-700">
           <Link to={`/profile/${post.author?._id}`} className="flex items-center gap-3">
               {post.author?.avatar ? (
                 <img src={post.author.avatar} alt={post.author?.username} className="w-10 h-10 rounded-full object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-sm font-bold">
                   {post.author?.username?.charAt(0)?.toUpperCase() || 'A'}
                 </div>
               )}
@@ -144,7 +144,7 @@ export default function BlogCard({ post, onDelete }){
           {/* Read More */}
           <Link 
             to={`/post/${post._id}`} 
-            className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400 font-semibold text-sm group-hover:gap-2.5 transition-all"
+            className="flex items-center gap-1.5 text-teal-700 dark:text-teal-300 font-semibold text-sm group-hover:gap-2.5 transition-all"
           >
             Read
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@ export default function BlogCard({ post, onDelete }){
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full shadow-2xl"
+            className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700"
           >
             <h3 className="text-xl font-bold mb-4">Delete Post?</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">

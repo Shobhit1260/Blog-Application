@@ -1,16 +1,20 @@
-/* Import premium fonts for better typography */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Editorial typography for a Medium-like reading experience */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root{
-	--bg-1: #ffffff; /* page background */
-	--surface: #ffffff;
-	--accent: #0ea5a4; /* teal-500 */
-	--muted: #6b7280; /* slate-500 */
-	--muted-2: #9ca3af;
+	--bg-1: #fbfaf8;
+	--bg-2: #f4efe7;
+	--surface: rgba(255, 255, 255, 0.82);
+	--surface-strong: #ffffff;
+	--accent: #0f766e;
+	--accent-soft: rgba(15, 118, 110, 0.10);
+	--border: rgba(15, 23, 42, 0.08);
+	--muted: #64748b;
+	--muted-2: #94a3b8;
 	--font-display: 'Playfair Display', Georgia, serif;
 	--font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -20,12 +24,12 @@ html,body,#root{height:100%;}
 body{
 	font-family: var(--font-body);
 	color: #0f172a;
-	background: var(--bg-1);
+	background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
 	-webkit-font-smoothing:antialiased;
 	-moz-osx-font-smoothing:grayscale;
 	font-size: 16px;
-	line-height: 1.6;
-	letter-spacing: -0.011em;
+	line-height: 1.7;
+	letter-spacing: -0.01em;
 }
 
 /* Dark theme variables */
@@ -34,47 +38,80 @@ body{
 }
 
 .dark {
-	--bg-1: #0b1220;
-	--accent: #06b6d4;
+	--bg-1: #07111f;
+	--bg-2: #0b1220;
+	--surface: rgba(12, 18, 31, 0.82);
+	--surface-strong: #0f172a;
+	--accent: #2dd4bf;
+	--accent-soft: rgba(45, 212, 191, 0.10);
+	--border: rgba(148, 163, 184, 0.14);
 	--muted: #94a3b8;
-	background: linear-gradient(180deg, rgba(2,6,23,0.85) 0%, rgba(9,10,22,0.9) 100%);
+	background: linear-gradient(180deg, rgba(2,6,23,0.92) 0%, rgba(9,10,22,0.96) 100%);
 }
 
-.dark .glass{ background: rgba(8,10,20,0.6); }
-.dark .card-shadow{ box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
+.dark .glass{ background: rgba(8,10,20,0.72); }
+.dark .card-shadow{ box-shadow: 0 18px 50px rgba(2,6,23,0.45); }
 .dark .muted{ color:var(--muted) }
 
-.container{ max-width:1200px; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem }
+.container{ max-width:1120px; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem }
 .container-sm{ max-width: 720px }
-.container-lg{ max-width: 1400px }
-.container-xl{ max-width: 1600px }
+.container-lg{ max-width: 1280px }
+.container-xl{ max-width: 1440px }
 .prose{ white-space: pre-wrap; }
+
+.page-surface{
+	background: var(--surface);
+	border: 1px solid var(--border);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.07);
+}
+
+.page-surface-strong{
+	background: var(--surface-strong);
+	border: 1px solid var(--border);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.section-heading{
+	font-family: var(--font-display);
+	letter-spacing: -0.03em;
+	line-height: 1.08;
+}
+
+.section-kicker{
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
 
 /* Make images and videos responsive */
 img, video { max-width: 100%; height: auto; display: block }
 
 /* Light mode surface styles */
-.glass{ background: rgba(255,255,255,0.9); border: 1px solid rgba(15,23,42,0.04); }
-.card-shadow{ box-shadow: 0 8px 30px rgba(2,6,23,0.06); }
+.glass{ background: rgba(255,255,255,0.78); border: 1px solid rgba(15,23,42,0.05); }
+.card-shadow{ box-shadow: 0 10px 30px rgba(2,6,23,0.08); }
 
 /* Focus styles for accessibility */
 a:focus, button:focus, input:focus, textarea:focus {
-	outline: 3px solid rgba(14,165,164,0.15);
+	outline: 3px solid rgba(15,118,110,0.18);
 	outline-offset: 3px;
-	box-shadow: 0 0 0 4px rgba(14,165,164,0.06);
+	box-shadow: 0 0 0 4px rgba(15,118,110,0.08);
 }
 
 /* Typography Enhancements */
 h1, h2, h3, h4, h5, h6 {
 	font-family: var(--font-body);
-	font-weight: 800;
+	font-weight: 750;
 	letter-spacing: -0.03em;
-	line-height: 1.2;
+	line-height: 1.15;
 }
 
-h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
-h2 { font-size: clamp(1.6rem, 4vw, 2.25rem); }
-h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
+h1 { font-size: clamp(2.15rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
+h3 { font-size: clamp(1.3rem, 3vw, 1.8rem); }
 
 .font-display {
 	font-family: var(--font-display);
@@ -88,7 +125,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
 
 /* Enhanced text styles */
 p {
-	line-height: 1.75;
+	line-height: 1.78;
 	font-weight: 400;
 }
 
@@ -103,16 +140,9 @@ p {
 	color: var(--muted);
 }
 
-/* Card improvements */
-.card-shadow{ box-shadow: 0 6px 20px rgba(2,6,23,0.06); }
-.muted{ color:var(--muted) }
-
-/* Utility for subtle glass */
-.glass{ background: rgba(255,255,255,0.7); backdrop-filter: blur(6px); }
-
 /* Smooth transitions for interactive elements */
 button, a, input, textarea {
-	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
 }
 
 /* Input improvements */
@@ -123,7 +153,7 @@ input, textarea {
 
 input::placeholder, textarea::placeholder {
 	font-weight: 400;
-	opacity: 0.6;
+	opacity: 0.58;
 }
 
 /* Code blocks */
@@ -138,6 +168,6 @@ code, pre {
 }
 
 @media (min-width: 1200px){
-	.container{ max-width:1200px }
+	.container{ max-width:1120px }
 	body { font-size: 18px }
 }
