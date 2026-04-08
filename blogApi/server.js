@@ -54,6 +54,17 @@ const healthCheck = (req, res) => {
 app.get('/health', healthCheck);
 app.get('/api/health', healthCheck);
 
+app.get('/', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        message: 'Blog API is running',
+        docs: {
+            health: '/health',
+            apiHealth: '/api/health'
+        }
+    });
+});
+
  
 
 
