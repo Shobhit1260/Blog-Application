@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes.js');
 const blogRoutes = require('./routes/blogRoutes.js');
 const aiRoutes = require('./routes/airoutes.js');
+const mongoose = require('mongoose');
 
 
 dotenv.config();
@@ -35,6 +36,23 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+const healthCheck = (req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const dbStatus = dbState === 1 ? 'connected' : dbState === 2 ? 'connecting' : dbState === 3 ? 'disconnecting' : 'disconnected';
+    const ok = dbState === 1;
+
+    res.status(ok ? 200 : 503).json({
+        status: ok ? 'ok' : 'degraded',
+        message: ok ? 'Backend is healthy' : 'Backend is running but the database is not connected',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        database: dbStatus
+    });
+};
+
+app.get('/health', healthCheck);
+app.get('/api/health', healthCheck);
 
  
 
